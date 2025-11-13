@@ -1,0 +1,184 @@
+#<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Dancing Rainbow Monkey</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --text: #f0f6fc;
+  }
+
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: radial-gradient(circle at center, #0d1117 0%, #020408 80%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: system-ui, sans-serif;
+    color: var(--text);
+    overflow: hidden;
+  }
+
+  .container {
+    text-align: center;
+  }
+
+  /* Dancing monkey SVG */
+  svg {
+    width: 200px;
+    height: 200px;
+    animation: dance 1s ease-in-out infinite;
+    transform-origin: center bottom;
+  }
+
+  @keyframes dance {
+    0% { transform: rotate(-5deg) translateY(0px); }
+    50% { transform: rotate(5deg) translateY(-10px); }
+    100% { transform: rotate(-5deg) translateY(0px); }
+  }
+
+  /* Rainbow filter */
+  .rainbow {
+    animation: rainbow 0.15s linear infinite, dance 1s ease-in-out infinite;
+  }
+
+  @keyframes rainbow {
+    0% { filter: hue-rotate(0deg); }
+    100% { filter: hue-rotate(360deg); }
+  }
+
+  h1 {
+    margin-top: 20px;
+    font-size: 1.6rem;
+  }
+
+  .status {
+    font-size: 1rem;
+    color: #b0c4de;
+    margin-top: 8px;
+  }
+
+  .bar {
+    width: 160px;
+    height: 6px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 999px;
+    margin: 14px auto 0;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .fill {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 0%;
+    background: linear-gradient(90deg, red, orange, yellow, green, blue, indigo, violet);
+    transition: width 0.2s linear;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <!-- Cartoon monkey (simple SVG) -->
+  <svg id="monkey" viewBox="0 0 128 128">
+    <circle cx="64" cy="64" r="60" fill="#8B4513" stroke="#5C3317" stroke-width="4"/>
+    <circle cx="45" cy="50" r="15" fill="#D2B48C"/>
+    <circle cx="83" cy="50" r="15" fill="#D2B48C"/>
+    <ellipse cx="64" cy="80" rx="25" ry="18" fill="#D2B48C"/>
+    <circle cx="50" cy="55" r="5" fill="#000"/>
+    <circle cx="78" cy="55" r="5" fill="#000"/>
+    <path d="M55 85 Q64 95 73 85" stroke="#000" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M15 70 Q5 50 15 40" stroke="#8B4513" stroke-width="10" fill="none" stroke-linecap="round"/>
+    <path d="M113 70 Q123 50 113 40" stroke="#8B4513" stroke-width="10" fill="none" stroke-linecap="round"/>
+  </svg>
+
+  <h1>Dancing Rainbow Monkey 🐒</h1>
+  <div class="status" id="status">Loading...</div>
+  <div class="bar"><div class="fill" id="fill"></div></div>
+</div>
+
+<script>
+const monkey = document.getElementById("monkey");
+const statusEl = document.getElementById("status");
+const fill = document.getElementById("fill");
+
+const RAINBOW_DURATION = 30000; // 30 seconds
+const PERIOD = 60000; // every minute
+
+let progressInterval;
+
+function startRainbow() {
+  clearInterval(progressInterval);
+  monkey.classList.add("rainbow");
+  statusEl.textContent = "🌈 Rainbow active!";
+  const start = Date.now();
+
+  progressInterval = setInterval(() => {
+    const elapsed = Date.now() - start;
+    const pct = Math.max(0, 100 * (1 - elapsed / RAINBOW_DURATION));
+    fill.style.width = pct + "%";
+    if (elapsed >= RAINBOW_DURATION) {
+      clearInterval(progressInterval);
+      monkey.classList.remove("rainbow");
+      fill.style.width = "0%";
+      statusEl.textContent = "Waiting for the next rainbow...";
+    }
+  }, 40);
+}
+
+function scheduleRainbows() {
+  // Trigger immediately once page loads
+  startRainbow();
+
+  // Schedule every minute aligned to wall-clock
+  const now = new Date();
+  const msToNextMinute = (60 - now.getSeconds()) * 1000 - now.getMilliseconds();
+  setTimeout(() => {
+    startRainbow();
+    setInterval(startRainbow, PERIOD);
+  }, msToNextMinute);
+}
+
+scheduleRainbows();
+</script>
+</body>
+</html>
+This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+
+      # Runs a single command using the runners shell
+      - name: Run a one-line script
+        run: echo Hello, world!
+
+      # Runs a set of commands using the runners shell
+      - name: Run a multi-line script
+        run: |
+          echo Add other actions to build,
+          echo test, and deploy your project.
