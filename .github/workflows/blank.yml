@@ -1,4 +1,4 @@
-name: Deploy Dancing Monkey HTML
+nname: Deploy Dancing Monkey HTML
 
 on:
   workflow_dispatch: # allows manual trigger
@@ -7,11 +7,9 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      # Step 1: Checkout the repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Step 2: Create HTML file
       - name: Create rainbow_dancing_monkey.html
         run: |
           cat << 'EOF' > rainbow_dancing_monkey.html
@@ -21,46 +19,27 @@ jobs:
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Dancing Rainbow Monkey</title>
-
 <style>
-  html, body {
-    margin: 0;
-    height: 100%;
-    background: radial-gradient(circle at center, #0d1117 0%, #020408 80%);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-family: system-ui, sans-serif;
-    color: #f0f6fc;
-    overflow: hidden;
-  }
-
-  .container { text-align: center; }
-
-  svg {
-    width: 200px;
-    height: 200px;
-    animation: dance 1s ease-in-out infinite;
-    transform-origin: center bottom;
-  }
-
-  @keyframes dance {
-    0% { transform: rotate(-5deg) translateY(0px); }
-    50% { transform: rotate(5deg) translateY(-10px); }
-    100% { transform: rotate(-5deg) translateY(0px); }
-  }
-
-  .rainbow { animation: rainbow 0.15s linear infinite, dance 1s ease-in-out infinite; }
-
-  @keyframes rainbow {
-    0% { filter: hue-rotate(0deg); }
-    100% { filter: hue-rotate(360deg); }
-  }
-
-  h1 { margin-top: 20px; font-size: 1.6rem; }
-  .status { font-size: 1rem; color: #b0c4de; margin-top: 8px; }
-  .bar { width: 160px; height: 6px; background: rgba(255,255,255,0.1); border-radius: 999px; margin: 14px auto 0; overflow: hidden; position: relative; }
-  .fill { position: absolute; left: 0; top: 0; bottom: 0; width: 0%; background: linear-gradient(90deg, red, orange, yellow, green, blue, indigo, violet); transition: width 0.2s linear; }
+html, body {
+  margin: 0;
+  height: 100%;
+  background: radial-gradient(circle at center, #0d1117 0%, #020408 80%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: system-ui, sans-serif;
+  color: #f0f6fc;
+  overflow: hidden;
+}
+.container { text-align: center; }
+svg { width: 200px; height: 200px; animation: dance 1s ease-in-out infinite; transform-origin: center bottom; }
+@keyframes dance { 0% { transform: rotate(-5deg) translateY(0px); } 50% { transform: rotate(5deg) translateY(-10px); } 100% { transform: rotate(-5deg) translateY(0px); } }
+.rainbow { animation: rainbow 0.15s linear infinite, dance 1s ease-in-out infinite; }
+@keyframes rainbow { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(360deg); } }
+h1 { margin-top: 20px; font-size: 1.6rem; }
+.status { font-size: 1rem; color: #b0c4de; margin-top: 8px; }
+.bar { width: 160px; height: 6px; background: rgba(255,255,255,0.1); border-radius: 999px; margin: 14px auto 0; overflow: hidden; position: relative; }
+.fill { position: absolute; left: 0; top: 0; bottom: 0; width: 0%; background: linear-gradient(90deg, red, orange, yellow, green, blue, indigo, violet); transition: width 0.2s linear; }
 </style>
 </head>
 <body>
@@ -97,7 +76,6 @@ function startRainbow() {
   monkey.classList.add("rainbow");
   statusEl.textContent = "🌈 Rainbow active!";
   const start = Date.now();
-
   progressInterval = setInterval(() => {
     const elapsed = Date.now() - start;
     const pct = Math.max(0, 100 * (1 - elapsed / RAINBOW_DURATION));
@@ -127,7 +105,6 @@ scheduleRainbows();
 </html>
 EOF
 
-      # Step 3: Push to gh-pages branch
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v6
         with:
@@ -135,3 +112,4 @@ EOF
           publish_branch: gh-pages
           publish_dir: ./
           commit_message: "Deploy dancing rainbow monkey HTML"
+    
