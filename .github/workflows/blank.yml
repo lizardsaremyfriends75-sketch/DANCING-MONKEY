@@ -4,6 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Dancing Rainbow Monkey</title>
+
 <style>
   :root {
     --bg: #0d1117;
@@ -106,7 +107,7 @@ const statusEl = document.getElementById("status");
 const fill = document.getElementById("fill");
 
 const RAINBOW_DURATION = 30000; // 30 seconds
-const PERIOD = 60000; // every minute
+const PERIOD = 60000;           // every minute
 
 let progressInterval;
 
@@ -130,10 +131,10 @@ function startRainbow() {
 }
 
 function scheduleRainbows() {
-  // Trigger immediately once page loads
+  // Start immediately
   startRainbow();
 
-  // Schedule every minute aligned to wall-clock
+  // Align to the next minute boundary
   const now = new Date();
   const msToNextMinute = (60 - now.getSeconds()) * 1000 - now.getMilliseconds();
   setTimeout(() => {
@@ -146,3 +147,4 @@ scheduleRainbows();
 </script>
 </body>
 </html>
+
